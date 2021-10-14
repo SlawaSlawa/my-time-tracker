@@ -17,33 +17,41 @@
     <div class="app pt-3 pb-3">
         <div class="container">
             <h1>Time-Tracker</h1>
-            <button type="button" class="btn btn-primary position-relative">
+            <button type="button" class="btn btn-primary position-relative" @click="showForm = !showForm">
                 Добавить задачу +
             </button>
             <hr>
             <h2>
                 Список задач:
             </h2>
-            <div class="alert alert-secondary">
+            <div class="alert alert-secondary"
+                v-if="taskList.length === 0"
+            >
                 На данный момент нет активных задач
             </div>
-            <hr>
-            <div class="mb-3">
-                <label for="taskTitle" class="form-label">Загловок задачи</label>
-                <input type="email" class="form-control" id="taskTitle">
-            </div>
-            <div class="mb-3">
-                <label for="taskDescription" class="form-label">Описание задачи</label>
-                <textarea class="form-control" id="taskDescription" rows="3"></textarea>
-            </div>
-            <button class="btn btn-success">Добавить задачу</button>
-            <hr>
-            <ul class="list-group bg-warning">
-                <li class="list-group-item list-group-item-danger">
+
+            <form class="mb-3" @submit.prevent="addTask"
+                  v-if="showForm"
+            >
+                <div class="mb-3">
+                    <label for="taskTitle" class="form-label">Загловок задачи</label>
+                    <input type="text" class="form-control" id="taskTitle" v-model="taskTitle">
+                </div>
+                <div class="mb-3">
+                    <label for="taskDescription" class="form-label">Описание задачи</label>
+                    <textarea class="form-control" id="taskDescription" rows="3" v-model="taskDescription"></textarea>
+                </div>
+                <button class="btn btn-success">Добавить задачу</button>
+            </form>
+            <ul class="list-group">
+                <li class="list-group-item list-group-item-danger mb-2"
+                    v-for="(task, index) in taskList"
+                >
                     <div class="row">
                         <div class="col-12 mb-5">
-                            <h3>Title</h3>
-                            <p>An item</p>
+                            {{ index }}
+                            <h3>{{ task.title }}</h3>
+                            <p>{{ task.description }}</p>
                         </div>
                     </div>
                     <div class="row">
@@ -81,7 +89,7 @@
             <div class="alert alert-secondary">
                 На данный момент нет выполненных задач
             </div>
-            <ul class="list-group bg-success">
+            <ul class="list-group">
                 <li class="list-group-item list-group-item-success d-flex justify-content-between flex-column">
                     <div>
                         <h3 class="text-decoration-line-through">Title</h3>

@@ -81,6 +81,7 @@ const app = new Vue({
             console.log('pauseTimer ' + index);
             clearTimeout(this.taskList[index].timerID);
         	this.taskList[index].disabled = false;
+            localStorage.setItem('taskList', JSON.stringify(this.taskList));
         },
         stopTimer(index) {
             console.log('stopTimer ' + index);
@@ -90,16 +91,19 @@ const app = new Vue({
             this.taskList[index].min = '00';
             this.taskList[index].hour = '00';
         	this.taskList[index].disabled = false;
+            localStorage.setItem('taskList', JSON.stringify(this.taskList));
         }
     },
     mounted() {
         if (localStorage.taskList) {
-        	console.log('mounted');
             this.taskList = JSON.parse(localStorage.taskList);
         	
         	this.taskList.forEach(item => {
-        		console.log(item);
-        		item.disabled = false;
+        		this.taskList.forEach((item, index) => {
+                if (item.disabled === true) {
+                    this.startTimer(index);
+                }
+            });
         	});
         }
     }

@@ -27,6 +27,12 @@ const app = new Vue({
             this.showForm = false;
             localStorage.setItem('taskList', JSON.stringify(this.taskList));
         },
+        deleteTask(index) {
+            console.log('deleteExecutedTask');
+            clearTimeout(this.taskList[index].timerID);
+            this.taskList.splice(index, 1);
+            localStorage.setItem('taskList', JSON.stringify(this.taskList));
+        },
         startTimer(index) {
             console.log('startTimer ');
         	let sec, min, hour;
@@ -94,6 +100,9 @@ const app = new Vue({
         	this.taskList[index].disabled = false;
             this.taskList[index].timerID = '';
             localStorage.setItem('taskList', JSON.stringify(this.taskList));
+        },
+        addExecutedTask(index) {
+            console.log('addExecutedTask');
         }
     },
     mounted() {

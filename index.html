@@ -86,10 +86,14 @@
                                 <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm15 0a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z" />
                             </svg>
                         </button>
-                        <button class="btn btn-success col-4 col-lg-2 col-xl-1 me-1 mb-2">
+                        <button class="btn btn-success col-4 col-lg-2 col-xl-1 me-1 mb-2"
+                            @click="addExecutedTask"
+                        >
                             Готово
                         </button>
-                        <button class="btn btn-danger col-4 col-lg-2 col-xl-1 mb-2" title="Сбросить таймер">
+                        <button class="btn btn-danger col-4 col-lg-2 col-xl-1 mb-2" title="Сбросить таймер"
+                            @click="deleteTask(index)"
+                        >
                             Удалить
                         </button>
                     </div>
@@ -97,14 +101,22 @@
             </ul>
             <hr>
             <h2>Выполненные задачи:</h2>
-            <div class="alert alert-secondary">
+            <div class="alert alert-secondary"
+                v-if="executedTaskList.length === 0"
+            >
                 На данный момент нет выполненных задач
             </div>
             <ul class="list-group">
-                <li class="list-group-item list-group-item-success d-flex justify-content-between flex-column">
+                <li class="list-group-item list-group-item-success d-flex justify-content-between flex-column"
+                    v-for="task in executedTaskList"
+                >
                     <div>
-                        <h3 class="text-decoration-line-through">Title</h3>
-                        <p class="text-decoration-line-through">An item</p>
+                        <h3 class="text-decoration-line-through">
+                            {{ task.title }}
+                        </h3>
+                        <p class="text-decoration-line-through">
+                            {{ task.description }}
+                        </p>
                     </div>
                     <div>
                         <span>Время выполнения: </span>

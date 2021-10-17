@@ -114,7 +114,8 @@ const app = new Vue({
             localStorage.setItem('executedTaskList', JSON.stringify(this.executedTaskList));
         },
         returnExecutedTask(index) {
-            console.log(index);
+            console.log(this.executedTaskList[index].disabled);
+            this.executedTaskList[index].disabled = false;
             this.taskList.push(this.executedTaskList[index]);
             this.executedTaskList.splice(index, 1);
             localStorage.setItem('taskList', JSON.stringify(this.taskList));

@@ -103,12 +103,29 @@ const app = new Vue({
         },
         addExecutedTask(index) {
             console.log('addExecutedTask');
+            this.executedTaskList.unshift(this.taskList[index]);
+            clearTimeout(this.taskList[index].timerID);
+            this.taskList.splice(index, 1);
+            localStorage.setItem('taskList', JSON.stringify(this.taskList));
+            localStorage.setItem('executedTaskList', JSON.stringify(this.executedTaskList));
+        },
+        deleteExecutedTask(index) {
+            this.executedTaskList.splice(index, 1);
+            localStorage.setItem('executedTaskList', JSON.stringify(this.executedTaskList));
+        },
+        returnExecutedTask(index) {
+            console.log(index);
+            this.taskList.push(this.executedTaskList[index]);
+            this.executedTaskList.splice(index, 1);
+            localStorage.setItem('taskList', JSON.stringify(this.taskList));
+            localStorage.setItem('executedTaskList', JSON.stringify(this.executedTaskList));
         }
     },
     mounted() {
         if (localStorage.taskList) {
             this.taskList = JSON.parse(localStorage.taskList);
-        	
+            this.executedTaskList = JSON.parse(localStorage.executedTaskList);
+
         	this.taskList.forEach(item => {
         		this.taskList.forEach((item, index) => {
                 if (item.disabled === true) {

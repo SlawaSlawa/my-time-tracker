@@ -87,7 +87,7 @@
                             </svg>
                         </button>
                         <button class="btn btn-success col-4 col-lg-2 col-xl-1 me-1 mb-2"
-                            @click="addExecutedTask"
+                            @click="addExecutedTask(index)"
                         >
                             Готово
                         </button>
@@ -107,8 +107,8 @@
                 На данный момент нет выполненных задач
             </div>
             <ul class="list-group">
-                <li class="list-group-item list-group-item-success d-flex justify-content-between flex-column"
-                    v-for="task in executedTaskList"
+                <li class="list-group-item list-group-item-success d-flex justify-content-between flex-column mb-2"
+                    v-for="(task, index) in executedTaskList"
                 >
                     <div>
                         <h3 class="text-decoration-line-through">
@@ -120,11 +120,19 @@
                     </div>
                     <div>
                         <span>Время выполнения: </span>
-                        <span class="badge bg-secondary col-12 col-md-2 mb-2">01:21:20</span>
-                        <button class="btn btn-info" title="Сбросить таймер">
+                        <span class="badge bg-secondary col-12 col-md-2 mb-2">
+                            {{ task.hour }} :
+                            {{ task.min }} : 
+                            {{ task.sec }}
+                        </span>
+                        <button class="btn btn-info" title="Вернуть выполненную задачу"
+                            @click="returnExecutedTask(index)"
+                        >
                             Вернуть
                         </button>
-                        <button class="btn btn-danger" title="Сбросить таймер">
+                        <button class="btn btn-danger" title="Удалить выполненную задачу"
+                            @click="deleteExecutedTask(index)"
+                        >
                             Удалить
                         </button>
                     </div>

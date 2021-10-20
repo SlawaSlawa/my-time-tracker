@@ -168,8 +168,6 @@ const app = new Vue({
                 this.isValidate = true;
                 this.errorInput = 'border border-danger'
             }
-
-
         }
     },
     mounted() {

@@ -30,12 +30,19 @@
                 На данный момент нет активных задач
             </div>
 
-            <form class="mb-3" @submit.prevent="addTask"
+            <form class="mb-3" @submit.prevent="validateForm"
                   v-if="showForm"
             >
                 <div class="mb-3">
                     <label for="taskTitle" class="form-label">Загловок задачи</label>
-                    <input type="text" class="form-control" id="taskTitle" v-model="taskTitle">
+                    <span class="badge bg-danger"
+                          v-if="isValidate"
+                    >Поле обязательно для заполнения</span>
+                    <input type="text" class="form-control" id="taskTitle" 
+                        v-model="taskTitle"
+                        :class="errorInput"
+                        @input="validateForm"
+                        >
                 </div>
                 <div class="mb-3">
                     <label for="taskDescription" class="form-label">Описание задачи</label>
@@ -49,7 +56,6 @@
                 >
                     <div class="row">
                         <div class="col-12 mb-5">
-                            {{ index }}
                             <h3>{{ task.title }}</h3>
                             <p>{{ task.description }}</p>
                         </div>

@@ -7,11 +7,12 @@ const app = new Vue({
         taskList: [],
         executedTaskList: [],
         taskTitle: '',
-        taskDescription: ''
+        taskDescription: '',
+        isValidate: false,
+        errorInput: ''
     },
     methods: {
         addTask() {
-            console.log('add task');
             this.taskList.push({
                 title: this.taskTitle,
                 description: this.taskDescription,
@@ -29,13 +30,11 @@ const app = new Vue({
             localStorage.setItem('taskList', JSON.stringify(this.taskList));
         },
         deleteTask(index) {
-            console.log('deleteExecutedTask');
             clearTimeout(this.taskList[index].timerID);
             this.taskList.splice(index, 1);
             localStorage.setItem('taskList', JSON.stringify(this.taskList));
         },
         startTimer(index) {
-            console.log('startTimer');
             let sec, min, hour;
 
             this.taskList[index].utcTime = new Date().getTime();
@@ -74,31 +73,30 @@ const app = new Vue({
                     this.taskList[index].hour = hour;
                 }
 
-                if (sec >= 59) {
+                if (sec === 60) {
                     min++;
                     sec = '00';
                 }
 
-                if (min >= 59) {
+                if (min === 60) {
                     hour++;
                     min = '00';
                 }
 
                 sec++;
-                
+
                 localStorage.setItem('taskList', JSON.stringify(this.taskList));
             }, 1000);
         },
         pauseTimer(index) {
-            console.log('pauseTimer');
             clearTimeout(this.taskList[index].timerID);
             this.taskList[index].disabled = false;
             localStorage.setItem('taskList', JSON.stringify(this.taskList));
         },
         stopTimer(index) {
-            console.log('stopTimer');
             clearTimeout(this.taskList[index].timerID);
             this.taskList[index].time = 0;
+            this.taskList[index].utcTime = 0;
             this.taskList[index].sec = '00';
             this.taskList[index].min = '00';
             this.taskList[index].hour = '00';
@@ -107,7 +105,6 @@ const app = new Vue({
             localStorage.setItem('taskList', JSON.stringify(this.taskList));
         },
         addExecutedTask(index) {
-            console.log('addExecutedTask');
             this.executedTaskList.unshift(this.taskList[index]);
             clearTimeout(this.taskList[index].timerID);
             this.taskList.splice(index, 1);
@@ -126,46 +123,58 @@ const app = new Vue({
             localStorage.setItem('executedTaskList', JSON.stringify(this.executedTaskList));
         },
         setDateForTimer(task) {
-            console.log('setDateForTimer');
-            const currentTime = new Date().getTime();
-            const startTimerTime = currentTime - task.utcTime;
+            if (task.disabled) {
+                const currentTime = new Date().getTime();
+                const startTimerTime = currentTime - task.utcTime;
 
-            let seconds = Math.floor((startTimerTime / 1000) % 60);
-            let minutes = Math.floor((startTimerTime / (1000 * 60)) % 60);
-            let hours = Math.floor((startTimerTime / (1000 * 60 * 60)) % 24);
+                let seconds = Math.floor((startTimerTime / 1000) % 60);
+                let minutes = Math.floor((startTimerTime / (1000 * 60)) % 60);
+                let hours = Math.floor((startTimerTime / (1000 * 60 * 60)) % 24);
 
-            task.hour = +task.hour;
-            task.min = +task.min;
-            task.sec = +task.sec;
+                task.hour = +task.hour;
+                task.min = +task.min;
+                task.sec = +task.sec;
 
-            task.hour += +hours;
-            task.min += +minutes;
-            task.sec += +seconds;
+                task.hour += +hours;
+                task.min += +minutes;
+                task.sec += +seconds;
 
-            if (task.sec >= 60) {
-                task.min++;
-                task.sec -= 60;
+                if (task.sec === 60) {
+                    task.min++;
+                    task.sec -= 60;
+                }
+
+                if (task.min === 60) {
+                    task.hour++;
+                    task.min -= 60;
+                }
+
+                task.hour = (task.hour < 10) ? "0" + task.hour : task.hour;
+                task.min = (task.min < 10) ? "0" + task.min : task.min;
+                task.sec = (task.sec < 10) ? "0" + task.sec : task.sec;
+
+                localStorage.setItem('taskList', JSON.stringify(this.taskList));
             }
 
-            if (task.min >= 60) {
-                task.hour++;
-                task.min -= 60;
+        },
+        validateForm(evt) {
+            if (this.taskTitle.trim().length > 0) {
+                this.isValidate = false;
+                this.errorInput = '';
+                if (evt.type === 'submit') {
+                    this.addTask();
+                }
+            } else {
+                this.isValidate = true;
+                this.errorInput = 'border border-danger'
             }
 
-            task.hour = (task.hour < 10) ? "0" + task.hour : task.hour;
-            task.min = (task.min < 10) ? "0" + task.min : task.min;
-            task.sec = (task.sec < 10) ? "0" + task.sec : task.sec;
 
-            localStorage.setItem('taskList', JSON.stringify(this.taskList));
         }
     },
     mounted() {
-        console.log('mounted');
         if (localStorage.taskList) {
             this.taskList = JSON.parse(localStorage.taskList);
-            if (this.executedTaskList.length !== 0) {
-                this.executedTaskList = JSON.parse(localStorage.executedTaskList);
-            }
 
             this.taskList.forEach(item => {
                 this.taskList.forEach((item, index) => {
@@ -177,6 +186,12 @@ const app = new Vue({
                     }
                 });
             });
+        }
+
+
+        if (localStorage.executedTaskList.length !== 0) {
+            console.log(this.executedTaskList);
+            this.executedTaskList = JSON.parse(localStorage.executedTaskList);
         }
     }
 });
